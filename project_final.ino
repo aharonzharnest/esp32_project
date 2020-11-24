@@ -26,7 +26,7 @@ const char* password = "rgdr1264";
 #define MAXCLK  5
 
 // initialize the Thermocouple
-//Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
+Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 Adafruit_BMP085 bmp;
 
@@ -34,11 +34,11 @@ Adafruit_BMP085 bmp;
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
-//String readTemp() {
-  //double c = thermocouple.readCelsius();
-  //return String(c);
+String readTemp() {
+  double c = thermocouple.readCelsius();
+  return String(c);
   //return messerd temputre
-//}
+}
 
 
 String readPres() {
@@ -90,9 +90,9 @@ setInterval(function ( ) {
       document.getElementById("temperature").innerHTML = this.responseText;
     }
   };
-  //xhttp.open("GET", "/temperature", true);
- // xhttp.send();
-//}, 10000 ) ;
+  xhttp.open("GET", "/temperature", true);
+ xhttp.send();
+}, 10000 ) ;
 
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
@@ -109,10 +109,10 @@ setInterval(function ( ) {
 
 // Replaces placeholder with bmp values
 String processor(const String& var){
-  //Serial.println(var);
-  //if(var == "TEMPERATURE"){
- //   return readTemp();
-  //}
+  Serial.println(var);
+  if(var == "TEMPERATURE"){
+    return readTemp();
+  }
  if(var == "PRESSURE"){
     return readPres();
   }
@@ -139,11 +139,11 @@ void setup(){
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
   });
- // server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
-//    request->send_P(200, "text/plain", readTemp().c_str());
-//  });
-  server.on("/pressure", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", readPres().c_str());
+  server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
+  request->send_P(200, "text/plain", readTemp().c_str());
+  });
+  server.on("/pressure", HTTP_GET, [](AsyncWebServerRequest *request){  
+  request->send_P(200, "text/plain", readPres().c_str());
   });
 
   // Start server
